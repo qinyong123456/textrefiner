@@ -1,6 +1,6 @@
 # TextRefiner: Internal Visual Feature as Efficient Refiner for Vision-Language Models Prompt Tuning
 
-This repository contains the implementation of the AAAI2025 paper: TextRefiner: Internal Visual Feature as Efficient Refiner for Vision-Language Models Prompt Tuning [[Paper]](https://arxiv.org/abs/2408.03735). 
+This repository contains the implementation of the AAAI2025 paper: TextRefiner: Internal Visual Feature as Efficient Refiner for Vision-Language Models Prompt Tuning [[Paper]](https://arxiv.org/abs/2412.08176). 
 
 ## How to Run
 
@@ -25,7 +25,7 @@ pip install torch==1.9.0+cu111 torchvision==0.10.0+cu111 torchaudio==0.9.0 -f ht
 
 * Clone TextRefiner code repository and install requirements
 ```bash
-# Clone PromptSRC code base
+# Clone TextRefiner code base
 git clone https://github.com/xjjxmu/TextRefiner.git
 
 
@@ -61,8 +61,8 @@ Below we provide an example on how to evaluate the model on ImageNet.
 
 ```bash
 # seed=1
-bash scripts/cocoop/base2new_train.sh imagenet 1
-bash scripts/cocoop/base2new_test.sh imagenet 1
+bash scripts/textrefiner/base2new_train.sh imagenet 1
+bash scripts/textrefiner/base2new_test.sh imagenet 1
 ```
 For instance, after you finish the evaluation (including `base2new_train.sh` and `base2new_test.sh`) on ImageNet using the aforementioned commands, you would get
 
@@ -106,6 +106,15 @@ Our code and readme are based on [CoOp](https://github.com/KaiyangZhou/CoOp) and
 # Citation
 
 ```
+@misc{xie2024textrefinerinternalvisualfeature,
+      title={TextRefiner: Internal Visual Feature as Efficient Refiner for Vision-Language Models Prompt Tuning}, 
+      author={Jingjing Xie and Yuxin Zhang and Jun Peng and Zhaohong Huang and Liujuan Cao},
+      year={2024},
+      eprint={2412.08176},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2412.08176}, 
+}
 ```
 
 
@@ -113,4 +122,3 @@ Our code and readme are based on [CoOp](https://github.com/KaiyangZhou/CoOp) and
 ### Concact
 
 If you have any questions, you can submit an [issue](https://github.com/zhengli97/PromptKD/issues) on GitHub, or contact me by email (jingjingxie[at]stu.xmu.edu.cn).
-

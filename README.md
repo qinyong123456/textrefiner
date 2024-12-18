@@ -122,4 +122,4 @@ Our code and readme are based on [CoOp](https://github.com/KaiyangZhou/CoOp) and
 }
 ```
 
-If you have any questions, you can submit an [issue](https://github.com/zhengli97/PromptKD/issues) on GitHub, or contact me by email (jingjingxie[at]stu.xmu.edu.cn).
+If you have any questions, you can submit an [issue](https://github.com/xjjxmu/TextRefiner/issues) on GitHub, or contact me by email (jingjingxie[at]stu.xmu.edu.cn).

@@ -1,7 +1,7 @@
 # TextRefiner: Internal Visual Feature as Efficient Refiner for Vision-Language Models Prompt Tuning
 
 This repository contains the implementation of the AAAI2025 paper: TextRefiner: Internal Visual Feature as Efficient Refiner for Vision-Language Models Prompt Tuning [[Paper]](https://arxiv.org/abs/2412.08176). 
-
+[中文解读](https://zhuanlan.zhihu.com/p/15940023585)
 We introduce **TextRefiner**, a **plug-and-play** module, to enhance visual attributes and achieve local alignment through **internal visual features instead of relying on external knowledge databases**. It can be seamlessly integrated into existing prompt learning methods and introduces almost no additional computational overhead during inference as shown in the figure below.
 ![](/image/framework_efficiency.jpg "framework_efficiency")
 

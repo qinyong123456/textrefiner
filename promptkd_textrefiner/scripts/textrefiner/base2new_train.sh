@@ -2,7 +2,7 @@
 
 # custom config
 DATA=/path/to/data
-TRAINER=PromptKD
+TRAINER=TextRefiner
 
 # stanford_cars
 

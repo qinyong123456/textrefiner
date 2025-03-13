@@ -2,7 +2,7 @@
 
 # custom config
 DATA=/path/to/data
-TRAINER=PromptKD
+TRAINER=TextRefiner
 
 DATASET=$1
 SEED=$2

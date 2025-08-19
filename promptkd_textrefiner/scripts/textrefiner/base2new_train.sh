@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # custom config
-DATA=/path/to/data
+DATA="/kaggle/working/textrefiner/data"
 TRAINER=TextRefiner
 
 # stanford_cars

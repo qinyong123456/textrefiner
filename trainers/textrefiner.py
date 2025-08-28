@@ -76,7 +76,7 @@ class TextEncoder(nn.Module):
         return x
     # zero-shot clip
     def encode_text(self, text):
-         text = text.to(self.device)  # 替换.text.cuda()
+        text = text.to(self.device)  # 替换.text.cuda()
         x = self.token_embedding(text).type(self.dtype)  # [batch_size, n_ctx, d_model]
 
         x = x + self.positional_embedding.type(self.dtype)

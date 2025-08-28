@@ -397,7 +397,7 @@ class TextRefiner(TrainerX):
         self.model = CustomCLIP(cfg, classnames, clip_model, device=self.device)  # 新增device参数
 
         print("Building memory")
-        self.memory = Memory(clip_model,feature_dim=512, memory_size=cfg.TRAINER.TF.MEMORY_SIZE, alpha=cfg.TRAINER.TF.ALPHA,device=self.device  # 传入trainer的设备)
+        self.memory = Memory(clip_model,feature_dim=512, memory_size=cfg.TRAINER.TF.MEMORY_SIZE, alpha=cfg.TRAINER.TF.ALPHA,device=self.device)
         if cfg.TRAINER.TF.BALANCE:
             self.balance = cfg.TRAINER.TF.BALANCE
         if cfg.TRAINER.TF.DISTILL:

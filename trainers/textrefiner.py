@@ -53,8 +53,9 @@ def load_clip_to_cpu(cfg):
 
 
 class TextEncoder(nn.Module):
-    def __init__(self, clip_model):
+    def __init__(self, clip_model, device):
         super().__init__()
+        self.device = device  # 保存设备
         self.transformer = clip_model.transformer
         self.positional_embedding = clip_model.positional_embedding
         self.ln_final = clip_model.ln_final
@@ -75,7 +76,7 @@ class TextEncoder(nn.Module):
         return x
     # zero-shot clip
     def encode_text(self, text):
-        text = text.cuda()
+         text = text.to(self.device)  # 替换.text.cuda()
         x = self.token_embedding(text).type(self.dtype)  # [batch_size, n_ctx, d_model]
 
         x = x + self.positional_embedding.type(self.dtype)
@@ -216,17 +217,19 @@ class PromptLearner(nn.Module):
 
 
 class CustomCLIP(nn.Module):
-    def __init__(self, cfg, classnames, clip_model):
+    def __init__(self, cfg, classnames, clip_model, device):
         super().__init__()
         self.prompt_learner = PromptLearner(cfg, classnames, clip_model)
         self.tokenized_prompts = self.prompt_learner.tokenized_prompts
         self.image_encoder = clip_model.visual
-        self.text_encoder = TextEncoder(clip_model)
+        #self.text_encoder = TextEncoder(clip_model)
+        self.text_encoder = TextEncoder(clip_model, device=device)  # 传入device
         self.logit_scale = clip_model.logit_scale
         self.dtype = clip_model.dtype
         
         self.mid_image_trans = Feature_Trans_Module_two_layer(512, 512)
-        self.mid_image_trans = self.mid_image_trans.cuda()
+        # 修正后：使用动态设备（需传入trainer的self.device）
+        self.mid_image_trans = self.mid_image_trans.to(device)  # device从外部传入
         convert_weights(self.mid_image_trans)
         
         
@@ -282,24 +285,25 @@ class CustomCLIP(nn.Module):
 
 
 class Memory(nn.Module):
-    def __init__(self, clip_model,feature_dim = 512, memory_size = 25, reduction = 4, frozen_text_embedding=None, alpha=0.2,momentum=0.8):
+    def __init__(self, clip_model,feature_dim = 512, memory_size = 25, reduction = 4, frozen_text_embedding=None, alpha=0.2,momentum=0.8,device=None):
         super().__init__()
-        self.device = clip_model.dtype
+        # 修正1：正确获取设备（优先用传入的device，否则从clip_model取）
+        self.device = device if device is not None else clip_model.logit_scale.device
         self.memory_size = memory_size
         self.feature_dim = feature_dim
         self.text_fine_cache = F.normalize(torch.rand(self.memory_size, feature_dim), dim = -1)
         self.text_fine_cache = self.text_fine_cache.to(self.device)
-        self.text_fine_cache = self.text_fine_cache.cuda()
+        
         self.alpha = alpha
         self.momentum = momentum
 
         if frozen_text_embedding is not None:
-            self.frozen_text_embedding = frozen_text_embedding
+            self.frozen_text_embedding = frozen_text_embedding.to(self.device)  # 确保embedding在正确设备
 
         
         self.extractor = nn.Linear(2 * feature_dim , feature_dim, bias=False)
         self.extractor = self.extractor.to(self.device)
-        self.extractor = self.extractor.cuda()
+        
 
 
         self.writeTF = lambda x: x.clone()
@@ -390,10 +394,10 @@ class TextRefiner(TrainerX):
             clip_model.float()
 
         print("Building custom CLIP")
-        self.model = CustomCLIP(cfg, classnames, clip_model)
+        self.model = CustomCLIP(cfg, classnames, clip_model, device=self.device)  # 新增device参数
 
         print("Building memory")
-        self.memory = Memory(clip_model,feature_dim=512, memory_size=cfg.TRAINER.TF.MEMORY_SIZE, alpha=cfg.TRAINER.TF.ALPHA)
+        self.memory = Memory(clip_model,feature_dim=512, memory_size=cfg.TRAINER.TF.MEMORY_SIZE, alpha=cfg.TRAINER.TF.ALPHA,device=self.device  # 传入trainer的设备)
         if cfg.TRAINER.TF.BALANCE:
             self.balance = cfg.TRAINER.TF.BALANCE
         if cfg.TRAINER.TF.DISTILL:
@@ -534,7 +538,8 @@ class TextRefiner(TrainerX):
             # set strict=False
             self._models[name].load_state_dict(state_dict, strict=False)
             if 'Mem' in name:
-                self._models[name].text_fine_cache = checkpoint["memory_item"]
+                #self._models[name].text_fine_cache = checkpoint["memory_item"]
+                self._models[name].text_fine_cache = checkpoint["memory_item"].to(self.device)  # 新增.to(self.device)
 
     @torch.no_grad()
     def test(self, split=None):
